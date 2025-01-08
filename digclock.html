@@ -4,59 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body{
-            margin: 0; padding: 40px;
+        body {
+            margin: 0; 
+            padding: 40px;
             display: flex; 
-            justify-content: center;
-        }
-        .clock{
-            background-color: grey;
-            height: 300px; width: 300px;
-            border-radius: 50%;
-            margin: 0; padding-top: 150px;
-            display: flex; gap: 10px;
-            justify-content: center;
-        }
-       .clock > .hr , .min , .sec{
-            background-color: black;
+            justify-content: center; 
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            font-family: Arial, sans-serif;
             color: whitesmoke;
-            height: 50px; width: 50px;
-            font-size: 25pt; text-align: center;
-            border-radius: 10%;
-            border-bottom: 3px solid chartreuse;
+        }
+        .clock {
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.5);
+            height: 300px; 
+            width: 300px;
+            border-radius: 50%;
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .clock:hover {
+            transform: scale(1.05);
+        }
+        .clock span {
+            font-size: 3rem; 
+            padding: 10px 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid chartreuse;
+            transition: background 0.3s ease-in-out;
+        }
+        .clock span:hover {
+            background-color: chartreuse;
+            color: black;
+        }
+        .format {
+            font-size: 0.9rem;
+            background: none;
+            border: none;
+            color: chartreuse;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
         }
     </style>
-    <title>DigitalClock</title>
+    <title>Enhanced Digital Clock</title>
 </head>
 <body>
-    <div class="clock">
-        <span class="hr"></span>
-        <span class="min"></span>
-        <span class="sec"></span>
+    <div class="clock" id="clock">
+        <span class="hr">00</span>:<span class="min">00</span>:<span class="sec">00</span>
+        <button class="format" id="toggleFormat">Switch to 12-hour format</button>
     </div>
+
+    <script>
+        // State Management
+        const state = {
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            is24HourFormat: true
+        };
+
+        // Select DOM elements
+        const hr = document.querySelector('.hr');
+        const min = document.querySelector('.min');
+        const sec = document.querySelector('.sec');
+        const toggleFormatBtn = document.getElementById('toggleFormat');
+
+        // Function to update the state and clock display
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+
+            // Format time for 12-hour format
+            if (!state.is24HourFormat) {
+                hours = hours % 12 || 12; // Convert 0 to 12 for 12-hour format
+            }
+
+            state.hours = hours;
+            state.minutes = minutes;
+            state.seconds = seconds;
+
+            hr.textContent = String(hours).padStart(2, '0');
+            min.textContent = String(minutes).padStart(2, '0');
+            sec.textContent = String(seconds).padStart(2, '0');
+        }
+
+        // Lifecycle Management: Initialize and update every second
+        function startClock() {
+            updateClock(); // Immediate update on load
+            setInterval(updateClock, 1000); // Update every second
+        }
+
+        // Event Handling: Toggle between 24-hour and 12-hour formats
+        toggleFormatBtn.addEventListener('click', () => {
+            state.is24HourFormat = !state.is24HourFormat;
+            toggleFormatBtn.textContent = state.is24HourFormat
+                ? 'Switch to 12-hour format'
+                : 'Switch to 24-hour format';
+            updateClock(); // Update the clock immediately to reflect the format change
+        });
+
+        // Start the clock on load
+        startClock();
+    </script>
 </body>
-<script>
-    //Select all the elements involved
-    const clock = document.querySelector('.clock');
-    const hr = document.querySelector('.hr');
-    const min = document.querySelector('.min');
-    const sec = document.querySelector('.sec');
-    
-
-    function updateClock() {
-        let now = new Date();
-        let hours = now.getHours();
-        let minutes = now.getMinutes();
-        let seconds = now.getSeconds();
-
-
-        // Update the clock elements with the formatted time
-        hr.textContent = hours;
-        min.textContent = minutes;
-        sec.textContent = seconds;
-    }
-
-    // Update the clock every second
-    setInterval(updateClock, 1000);
-</script>
 </html>
